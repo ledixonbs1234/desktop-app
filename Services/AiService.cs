@@ -7,7 +7,8 @@ namespace desktop_app.Services;
 public class AiService : IAiService
 {
     private readonly HttpClient _httpClient;
-    private readonly string _baseUrl = "http://localhost:3000";
+    // Cập nhật cổng kết nối chính xác từ 3000 sang 54321
+    private readonly string _baseUrl = "http://localhost:54321";
 
     public AiService()
     {

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Xon\\Desktop\\info_ai\\desktop-app\\desktop-app.csproj": {}
+    "C:\\Users\\Xon\\Documents\\desktop-app\\desktop-app.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Xon\\Desktop\\info_ai\\desktop-app\\desktop-app.csproj": {
+    "C:\\Users\\Xon\\Documents\\desktop-app\\desktop-app.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Xon\\Desktop\\info_ai\\desktop-app\\desktop-app.csproj",
+        "projectUniqueName": "C:\\Users\\Xon\\Documents\\desktop-app\\desktop-app.csproj",
         "projectName": "desktop-app",
-        "projectPath": "C:\\Users\\Xon\\Desktop\\info_ai\\desktop-app\\desktop-app.csproj",
+        "projectPath": "C:\\Users\\Xon\\Documents\\desktop-app\\desktop-app.csproj",
         "packagesPath": "C:\\Users\\Xon\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Xon\\Desktop\\info_ai\\desktop-app\\obj\\",
+        "outputPath": "C:\\Users\\Xon\\Documents\\desktop-app\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Xon\\AppData\\Roaming\\NuGet\\NuGet.Config"
