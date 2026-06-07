@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "dgSpecHash": "o9X0V3ZSqLE=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Xon\\Desktop\\info_ai\\desktop-app\\desktop-app.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Xon\\.nuget\\packages\\communitytoolkit.mvvm\\8.4.2\\communitytoolkit.mvvm.8.4.2.nupkg.sha512",
+    "C:\\Users\\Xon\\.nuget\\packages\\mousekeyhook\\5.7.1\\mousekeyhook.5.7.1.nupkg.sha512",
+    "C:\\Users\\Xon\\.nuget\\packages\\system.drawing.common\\10.0.8\\system.drawing.common.10.0.8.nupkg.sha512",
+    "C:\\Users\\Xon\\.nuget\\packages\\wpf-ui\\4.3.0\\wpf-ui.4.3.0.nupkg.sha512",
+    "C:\\Users\\Xon\\.nuget\\packages\\wpf-ui.abstractions\\4.3.0\\wpf-ui.abstractions.4.3.0.nupkg.sha512"
+  ],
+  "logs": [
+    {
+      "code": "NU1510",
+      "level": "Warning",
+      "message": "PackageReference System.Drawing.Common will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.",
+      "projectPath": "C:\\Users\\Xon\\Desktop\\info_ai\\desktop-app\\desktop-app.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\Xon\\Desktop\\info_ai\\desktop-app\\desktop-app.csproj",
+      "libraryId": "System.Drawing.Common",
+      "targetGraphs": [
+        "net10.0-windows7.0"
+      ]
+    }
+  ]
+}
