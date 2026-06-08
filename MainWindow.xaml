@@ -47,16 +47,50 @@
             <!-- Header / Drag Area -->
             <Grid Grid.Row="0" Height="32" Background="Transparent" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
                 <TextBlock Text="AI Desktop Assistant" Foreground="White" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                <Button Content="✕" 
-                        HorizontalAlignment="Right" 
-                        VerticalAlignment="Center" 
-                        Width="32" Height="32"
-                        Background="Transparent"
-                        Foreground="White"
-                        BorderThickness="0"
-                        FontSize="14"
-                        Cursor="Hand"
-                        Click="CloseButton_Click">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <!-- Nút Pin (Ghim ứng dụng) -->
+                    <ToggleButton x:Name="PinButton"
+                                  Width="32" Height="32"
+                                  IsChecked="{Binding IsPinned, Mode=TwoWay}"
+                                  ToolTip="Ghim ứng dụng (không tự ẩn khi mất focus)">
+                        <ToggleButton.Style>
+                            <Style TargetType="ToggleButton">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="BorderThickness" Value="0"/>
+                                <Setter Property="Cursor" Value="Hand"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ToggleButton">
+                                            <Border Background="{TemplateBinding Background}" CornerRadius="4" Padding="4">
+                                                <TextBlock Text="📌" FontSize="16" Foreground="{TemplateBinding Foreground}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Background" Value="#404040"/>
+                                                </Trigger>
+                                                <Trigger Property="IsChecked" Value="True">
+                                                    <Setter Property="Background" Value="#4A3F00"/> <!-- Nền vàng đậm khi được ghim -->
+                                                    <Setter Property="Foreground" Value="#FFD700"/> <!-- Icon vàng khi được ghim -->
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ToggleButton.Style>
+                    </ToggleButton>
+
+                    <!-- Nút Đóng -->
+                    <Button Content="✕" 
+                            Margin="4,0,0,0"
+                            Width="32" Height="32"
+                            Background="Transparent"
+                            Foreground="White"
+                            BorderThickness="0"
+                            FontSize="14"
+                            Cursor="Hand"
+                            Click="CloseButton_Click">
                     <Button.Style>
                         <Style TargetType="Button">
                             <Setter Property="Template">
@@ -76,6 +110,7 @@
                         </Style>
                     </Button.Style>
                 </Button>
+                </StackPanel>
             </Grid>
 
             <!-- Image Preview Area -->

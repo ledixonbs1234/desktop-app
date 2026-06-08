@@ -9,6 +9,13 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        Loaded += MainWindow_Loaded;
+    }
+
+    private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+    {
+        // Loại bỏ logic reset session khi Pin để giữ nguyên ảnh và nội dung chat.
+        // Chức năng Pin chỉ dùng để ngăn ứng dụng tự ẩn khi mất focus.
     }
 
     private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

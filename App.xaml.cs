@@ -38,6 +38,12 @@ public partial class App : Application
         {
             if (!_isOverlayActive)
             {
+                // Kiểm tra trạng thái Pin
+                if (_mainWindow.DataContext is MainViewModel vm && vm.IsPinned)
+                {
+                    return; // Nếu đang ghim, không làm gì cả
+                }
+
                 _mainWindow.Hide();
                 try
                 {
@@ -45,9 +51,9 @@ public partial class App : Application
                     await _aiService.AskAsync("/clear");
 
                     // Đưa giao diện Desktop về trạng thái ban đầu
-                    if (_mainWindow.DataContext is MainViewModel vm)
+                    if (_mainWindow.DataContext is MainViewModel vmReset)
                     {
-                        vm.ResetSession();
+                        vmReset.ResetSession();
                     }
                 }
                 catch (Exception ex)

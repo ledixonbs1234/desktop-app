@@ -28,6 +28,9 @@ public partial class MainViewModel : ObservableObject
     [NotifyCanExecuteChangedFor(nameof(SendToAiCommand))]
     private bool _isProcessing;
 
+    [ObservableProperty]
+    private bool _isPinned;
+
     public MainViewModel(IAiService aiService)
     {
         _aiService = aiService;
