@@ -32,15 +32,34 @@ public partial class App : Application
         _mainWindow = new MainWindow();
         _mainWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
         _mainWindow.DataContext = new MainViewModel(_aiService);
-        
-        _mainWindow.Deactivated += (s, args) =>
+
+        // Tự động làm mới phiên chat Qwen Web khi bị ẩn đi
+        _mainWindow.Deactivated += async (s, args) =>
         {
-            if (!_isOverlayActive) _mainWindow.Hide();
+            if (!_isOverlayActive)
+            {
+                _mainWindow.Hide();
+                try
+                {
+                    // Gửi chỉ thị dọn dẹp bối cảnh trình duyệt
+                    await _aiService.AskAsync("/clear");
+
+                    // Đưa giao diện Desktop về trạng thái ban đầu
+                    if (_mainWindow.DataContext is MainViewModel vm)
+                    {
+                        vm.ResetSession();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Lỗi dọn dẹp phiên chat: {ex.Message}");
+                }
+            }
         };
-        
+
         // Setup System Tray Icon
         SetupTrayIcon();
-        
+
         // Đăng ký Global Hook
         _globalHook = Hook.GlobalEvents();
         _globalHook.MouseDownExt += GlobalHook_MouseDownExt;

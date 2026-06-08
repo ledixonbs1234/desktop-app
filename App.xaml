@@ -1,12 +1,18 @@
 <Application x:Class="desktop_app.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:md="http://schemas.lepo.co/wpfui/2022/xaml/markdown"
              xmlns:local="clr-namespace:desktop_app">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Wpf.Ui;component/Resources/Theme/Dark.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/Wpf.Ui;component/Resources/Wpf.Ui.xaml" />
+                <!-- Bộ tài nguyên giao diện tối chuẩn WPF-UI -->
+                <ui:ThemesDictionary Theme="Dark" />
+                <ui:ControlsDictionary />
+                <!-- Bộ tài nguyên giao diện tối bổ trợ hiển thị Markdown -->
+                <md:ThemesDictionary Theme="Dark" />
+                <md:ControlsDictionary />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

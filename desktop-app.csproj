@@ -14,6 +14,8 @@
     <PackageReference Include="MouseKeyHook" Version="5.7.1" />
     <PackageReference Include="System.Drawing.Common" Version="10.0.8" />
     <PackageReference Include="WPF-UI" Version="4.3.0" />
+    <!-- Thêm gói hỗ trợ Render Markdown tương thích Dark Theme -->
+    <PackageReference Include="WPF-UI.Markdown" Version="3.0.5.4" />
   </ItemGroup>
 
 </Project>

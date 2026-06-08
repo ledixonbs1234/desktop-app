@@ -16,7 +16,6 @@ public partial class CropOverlayWindow : Window
     {
         InitializeComponent();
         
-        // Hiển thị ảnh nền đã chụp sẵn
         BackgroundImage.Source = ScreenshotBuffer.GetCachedScreenshot();
         
         this.KeyDown += (s, e) =>
@@ -71,7 +70,6 @@ public partial class CropOverlayWindow : Window
         {
             try
             {
-                // Crop TỪ ẢNH ĐỆM đã chụp trước đó, KHÔNG chụp lại màn hình
                 var cached = ScreenshotBuffer.GetCachedScreenshot();
                 if (cached != null)
                 {
@@ -93,7 +91,6 @@ public partial class CropOverlayWindow : Window
             this.DialogResult = false;
         }
         
-        // Xóa bộ đệm sau khi dùng xong
         ScreenshotBuffer.Clear();
         this.Close();
     }
