@@ -168,9 +168,9 @@
             </ui:Card>
 
             <!-- Action Buttons -->
-           <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
-    <ui:Button Content="Gửi" Appearance="Primary" Command="{Binding SendToAiCommand}" />
-</StackPanel>
+          <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
+                <ui:Button x:Name="SubmitButton" Content="Gửi" Appearance="Primary" Command="{Binding SendToAiCommand}" />
+            </StackPanel>
         </Grid>
     </Border>
 </Window>

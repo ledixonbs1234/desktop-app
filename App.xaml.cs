@@ -19,38 +19,37 @@ public partial class App : Application
     private readonly AiService _aiService = new();
     private bool _isOverlayActive = false;
     private HotkeyConfig _hotkeyConfig = new();
+    private readonly AutomationServer _automationServer = new();
 
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
 
+        // Khởi động server tự động hóa
+        _automationServer.Start();
+
         // Tải cấu hình phím tắt và lịch sử
         _hotkeyConfig = HotkeyConfig.Load();
         ChatHistoryService.Load();
 
-        // Khởi tạo MainWindow (ẩn, căn giữa màn hình)
+        // Khởi tạo MainWindow
         _mainWindow = new MainWindow();
         _mainWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
         _mainWindow.DataContext = new MainViewModel(_aiService);
 
-        // Tự động làm mới phiên chat Qwen Web khi bị ẩn đi
         _mainWindow.Deactivated += async (s, args) =>
         {
             if (!_isOverlayActive)
             {
-                // Kiểm tra trạng thái Pin
                 if (_mainWindow.DataContext is MainViewModel vm && vm.IsPinned)
                 {
-                    return; // Nếu đang ghim, không làm gì cả
+                    return;
                 }
 
                 _mainWindow.Hide();
                 try
                 {
-                    // Gửi chỉ thị dọn dẹp bối cảnh trình duyệt
                     await _aiService.AskAsync("/clear");
-
-                    // Đưa giao diện Desktop về trạng thái ban đầu
                     if (_mainWindow.DataContext is MainViewModel vmReset)
                     {
                         vmReset.ResetSession();
@@ -63,10 +62,12 @@ public partial class App : Application
             }
         };
 
-        // Setup System Tray Icon
+        // Thiết lập khay hệ thống
         SetupTrayIcon();
 
-        // Đăng ký Global Hook
+        // CHẠY KIỂM TRA LIÊN KẾT BACKEND KHÔNG GÂY TREO UI THREAD
+        _ = VerifyBackendConnectionAsync();
+
         _globalHook = Hook.GlobalEvents();
         _globalHook.MouseDownExt += GlobalHook_MouseDownExt;
     }
@@ -93,6 +94,34 @@ public partial class App : Application
         _trayIcon.ContextMenuStrip = contextMenu;
     }
 
+    // PHƯƠNG THỨC GỬI THÔNG BÁO BALLOON KHI KẾT NỐI / LỖI KẾT NỐI
+    private async Task VerifyBackendConnectionAsync()
+    {
+        // Chờ 500ms để đảm bảo các tiến trình nền hoạt động ổn định
+        await Task.Delay(500);
+
+        bool isConnected = await _aiService.CheckConnectionAsync();
+
+        if (isConnected)
+        {
+            _trayIcon?.ShowBalloonTip(
+                3000, // Thời gian hiển thị (ms)
+                "AI Desktop Assistant",
+                "Đã liên kết thành công với Bridge Server tại cổng 54321!",
+                ToolTipIcon.Info
+            );
+        }
+        else
+        {
+            _trayIcon?.ShowBalloonTip(
+                5000,
+                "Lỗi Kết Nối Backend",
+                "Không thể kết nối tới Bridge Server. Hãy chắc chắn rằng Node.js backend đang chạy ở cổng 54321.",
+                ToolTipIcon.Warning
+            );
+        }
+    }
+
     private void CenterAndShowMainWindow()
     {
         if (_mainWindow != null)
@@ -106,17 +135,13 @@ public partial class App : Application
 
     private void GlobalHook_MouseDownExt(object? sender, MouseEventExtArgs e)
     {
-        // Kiểm tra nút chuột từ config
         bool isMouseTrigger = e.Button == _hotkeyConfig.MouseButton;
-        
-        // Kiểm tra phím bàn phím từ config (nếu có)
         bool isKeyboardTrigger = false;
         if (_hotkeyConfig.KeyboardKey.HasValue && _hotkeyConfig.KeyboardKey.Value != Keys.None)
         {
             isKeyboardTrigger = Keyboard.IsKeyDown(KeyInterop.KeyFromVirtualKey((int)_hotkeyConfig.KeyboardKey.Value));
         }
 
-        // Hỗ trợ thêm phím Ctrl+Shift+A làm trigger mặc định phụ
         bool isDefaultCombo = !isMouseTrigger && !isKeyboardTrigger &&
             Keyboard.IsKeyDown(Key.LeftCtrl) &&
             Keyboard.IsKeyDown(Key.LeftShift) &&
@@ -125,15 +150,13 @@ public partial class App : Application
         if (isMouseTrigger || isKeyboardTrigger || isDefaultCombo)
         {
             if (_isOverlayActive) return;
-            
+
             e.Handled = true;
             _isOverlayActive = true;
 
             try
             {
-                // CHỤP ẢNH NỀN TRƯỚC KHI HIỆN OVERLAY
                 ScreenshotBuffer.CaptureAndCache();
-                
                 _mainWindow?.Hide();
                 var overlay = new CropOverlayWindow();
                 bool? result = overlay.ShowDialog();
@@ -146,8 +169,6 @@ public partial class App : Application
                         vm.HasImage = true;
                         vm.AiResponse = "Đã chụp vùng chọn. Hãy đặt câu hỏi!";
                     }
-                    
-                    // Hiển thị và căn giữa màn hình
                     CenterAndShowMainWindow();
                 }
             }
@@ -160,6 +181,7 @@ public partial class App : Application
 
     protected override void OnExit(ExitEventArgs e)
     {
+        _automationServer.Stop();
         if (_globalHook != null)
         {
             _globalHook.MouseDownExt -= GlobalHook_MouseDownExt;
