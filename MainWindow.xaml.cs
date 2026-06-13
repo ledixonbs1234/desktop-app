@@ -32,11 +32,13 @@ public partial class MainWindow : Window
     {
         if (e.Key == Key.Enter)
         {
-            if (Keyboard.Modifiers == ModifierKeys.Control)
+            // Nếu nhấn Shift + Enter thì cho phép xuống hàng (mặc định của TextBox khi AcceptsReturn=True)
+            if (Keyboard.Modifiers == ModifierKeys.Shift)
             {
                 return;
             }
 
+            // Các trường hợp khác nhấn Enter thì gửi tin nhắn
             e.Handled = true;
 
             if (DataContext is ViewModels.MainViewModel vm && vm.SendToAiCommand.CanExecute(null))

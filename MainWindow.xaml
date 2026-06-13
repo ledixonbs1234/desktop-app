@@ -120,11 +120,13 @@
 
             <!-- Prompt Input & Quick Buttons Panel -->
             <StackPanel Grid.Row="2" Margin="0,0,0,8">
-                <ui:TextBox x:Name="PromptTextBox" 
+            <ui:TextBox x:Name="PromptTextBox" 
                             PlaceholderText="Hỏi AI về bức ảnh này..." 
                             AcceptsReturn="True" 
                             TextWrapping="Wrap" 
-                            MaxHeight="100" 
+                            MinHeight="80"
+                            MaxHeight="200" 
+                            VerticalScrollBarVisibility="Auto"
                             Margin="0,0,0,8" 
                             Text="{Binding UserPrompt, UpdateSourceTrigger=PropertyChanged}" 
                             PreviewKeyDown="PromptTextBox_PreviewKeyDown" />

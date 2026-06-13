@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using desktop_app.Services;
 using System.Collections.Generic;
+using System.Windows;
 
 namespace desktop_app.ViewModels;
 
@@ -36,9 +37,6 @@ public partial class MainViewModel : ObservableObject
         _aiService = aiService;
     }
 
-    /// <summary>
-    /// Làm mới toàn bộ UI và lịch sử hội thoại cục bộ
-    /// </summary>
     public void ResetSession()
     {
         CapturedImage = null;
@@ -55,48 +53,70 @@ public partial class MainViewModel : ObservableObject
 
         IsProcessing = true;
 
+        // Lưu giữ câu hỏi hiện tại và dọn dẹp ô nhập liệu
+        string currentPrompt = UserPrompt;
+        UserPrompt = string.Empty;
+
         // Ghi nhận câu hỏi của người dùng vào giao diện hiển thị
-        _conversationHistory.Add($"**Bạn**: {UserPrompt}");
+        _conversationHistory.Add($"**Bạn**: {currentPrompt}");
         UpdateResponseView();
 
-        // Tạo chỉ thị chờ đợi phản quan trực quan
-        AiResponse += "\n\n---\n\n*AI đang suy nghĩ...*";
+        // Chuẩn bị dòng phản hồi trống cho AI
+        string aiPrefix = "**AI**: ";
+        string currentResponseText = "";
+
+        _conversationHistory.Add($"{aiPrefix}*AI đang suy nghĩ...*");
+        UpdateResponseView();
+        int activeAiHistoryIndex = _conversationHistory.Count - 1;
 
         try
         {
             string? base64Image = null;
 
-            // Chỉ gửi ảnh nếu ảnh tồn tại và chưa từng được gửi trước đó
             if (CapturedImage != null && HasImage)
             {
                 base64Image = ImageHelper.ToBase64(CapturedImage);
-
-                // Giải phóng vùng xem ảnh sau lượt gửi đầu tiên để chuyển hẳn sang Text Chat liên tục
                 CapturedImage = null;
                 HasImage = false;
             }
 
-            var response = await _aiService.AskAsync(UserPrompt, base64Image);
+            string finalModel = "unknown";
 
-            // Ghi nhận câu trả lời của AI vào giao diện hội thoại
-            _conversationHistory.Add($"**AI ({response.Model})**: {response.Answer}");
-            UpdateResponseView();
+            // Nhận và cập nhật từng phần phản hồi từ AI
+            await foreach (var chunk in _aiService.AskStreamAsync(currentPrompt, base64Image))
+            {
+                if (!string.IsNullOrEmpty(chunk.Text))
+                {
+                    currentResponseText += chunk.Text;
+                }
+                if (!string.IsNullOrEmpty(chunk.Model))
+                {
+                    finalModel = chunk.Model;
+                }
 
-            // Lưu vào cơ sở dữ liệu lịch sử chung của hệ thống
+                // Thực hiện cập nhật UI Thread một cách an toàn thông qua Dispatcher
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    _conversationHistory[activeAiHistoryIndex] = $"**AI ({finalModel})**: {currentResponseText}";
+                    UpdateResponseView();
+                });
+            }
+
+            // Ghi nhận lịch sử hoàn chỉnh sau khi stream kết thúc
             ChatHistoryService.Add(new ChatHistoryItem(
-                Question: UserPrompt,
-                Answer: response.Answer,
+                Question: currentPrompt,
+                Answer: currentResponseText,
                 ImageBase64: base64Image ?? string.Empty,
                 Timestamp: DateTime.Now
             ));
-
-            // Xóa sạch ô nhập liệu để sẵn sàng cho câu hỏi tiếp theo
-            UserPrompt = string.Empty;
         }
         catch (Exception ex)
         {
-            _conversationHistory.Add($"**Hệ thống báo lỗi**: {ex.Message}");
-            UpdateResponseView();
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                _conversationHistory.Add($"**Hệ thống báo lỗi**: {ex.Message}");
+                UpdateResponseView();
+            });
         }
         finally
         {
