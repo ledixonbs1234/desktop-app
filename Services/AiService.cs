@@ -6,7 +6,7 @@ using System.Text;
 
 namespace desktop_app.Services;
 
-public class AiService : IAiService
+public class AiService : IAiService, IDisposable
 {
     private readonly HttpClient _httpClient;
     private readonly string _baseUrl = "http://localhost:54321";
@@ -103,5 +103,10 @@ public class AiService : IAiService
                 }
             }
         }
+    }
+
+    public void Dispose()
+    {
+        _httpClient?.Dispose();
     }
 }

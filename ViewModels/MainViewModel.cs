@@ -44,6 +44,11 @@ public partial class MainViewModel : ObservableObject
         UserPrompt = string.Empty;
         AiResponse = "Chưa có phản hồi...";
         _conversationHistory.Clear();
+        
+        // Force GC để giải phóng BitmapSource cũ và unmanaged resources
+        System.GC.Collect();
+        System.GC.WaitForPendingFinalizers();
+        System.GC.Collect();
     }
 
     [RelayCommand(CanExecute = nameof(CanSendToAi))]

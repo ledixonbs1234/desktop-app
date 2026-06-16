@@ -28,5 +28,9 @@ public static class ScreenshotBuffer
     public static void Clear()
     {
         _cachedScreenshot = null;
+        // Force garbage collection để giải phóng unmanaged resources (HBITMAP) ngay lập tức
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
+        GC.Collect();
     }
 }

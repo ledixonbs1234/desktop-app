@@ -188,6 +188,10 @@ public partial class App : Application
             _globalHook.Dispose();
         }
         _trayIcon?.Dispose();
+        
+        // Dispose HttpClient để giải phóng connection pool
+        _aiService.Dispose();
+        
         base.OnExit(e);
     }
 }
